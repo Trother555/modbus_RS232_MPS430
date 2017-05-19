@@ -31,12 +31,11 @@ int main( void )
   MBS_init();                   //Initialize MODBUS
   ADC_init();
   __bis_SR_register(GIE);       //Interrupts enabled
-  //Получаем напряжение и пишем в регистры модбас
-  voltage_container vc = get_voltage();
-  MBSB_write_registers(2, vc.i_volt, 2);
   for(;;)
   { 
+    //Получаем напряжение и пишем в регистры модбас
+    voltage_container vc = get_voltage();
+    MBSB_write_registers(2, vc.i_volt, 2);
     MBS_operation();
   }  
 }
-

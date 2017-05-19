@@ -11,9 +11,9 @@ void ADC_init()
     REFCTL0 |= REFON;	//Enable refference generator
     P6SEL |= 0x01;          // Enable A/D channel A0
     // Turn on ADC12, set sampling time, set multiple sample conversion, set ref on, set ADC clock divider to 8
-    ADC12CTL0 = ADC12ON+ADC12SHT0_5+ADC12MSC + ADC12REFON_L + ADC12DIV_7;
+    ADC12CTL0 = ADC12ON+ADC12SHT0_14+ADC12MSC + ADC12REFON_L + ADC12DIV_7;
     // Use sampling timer, repeat single channel, SMCLK
-    ADC12CTL1 = ADC12SHP + ADC12CONSEQ_2 + ADC12SSEL0 + ADC12SSEL1;  
+    ADC12CTL1 = ADC12SHP + ADC12CONSEQ_2;// + ADC12SSEL0 + ADC12SSEL1;  
     ADC12MCTL0 = ADC12SREF_1;                 // Vr+=Vref+ and Vr-=AVss
     ADC12IE = 0x01;                           // Enable ADC12IFG.0
     ADC12CTL0 |= ADC12ENC;                    // Enable conversions
@@ -27,7 +27,9 @@ float get_volt()
     {
      res+=results[i];
     }
-    return 3*(float)res/sample_count/4095.0;
+    //x = (y - 1120)/(3936-1120)*(2.75-0.75)+0.75
+    //return ((float)res/sample_count-1120)*(2.25-0.75)/(3184-1120)+0.75;          
+    return (float)res/sample_count*3/4095;
 }
 
 voltage_container get_voltage()
@@ -37,11 +39,6 @@ voltage_container get_voltage()
     while(!voltage_ready);
     vc.f_volt = get_volt();
     return vc;
-}
-
-void voltage_read()
-{
-    voltage_ready = false;
 }
 
 #pragma vector=ADC12_VECTOR
@@ -57,8 +54,9 @@ __interrupt void ADC12ISR (void)
     case  6:                                  // Vector  6:  ADC12IFG0
       if (index == sample_count)
       {
+        index = 0;
         voltage_ready = true;
-        ADC12CTL0 &= ~(ADC12ENC|ADC12SC);        // Disable
+        //ADC12CTL0 &= ~(ADC12ENC|ADC12SC);        // Disable
         ADC12IE = 0x00;
         return;
       }

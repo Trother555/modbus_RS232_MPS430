@@ -1,10 +1,9 @@
 #include "modbus.h"
 #include "msp430x54x.h"
-//#include "modbus_buffer_functionality.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include "ADC_operation.h"
 
 unsigned char mbs_frame_buff[256];
 unsigned char mbs_buf_offset = 0;      
@@ -12,6 +11,12 @@ bool eof = 0;                               //Взводится, когда кадр полностью пр
 void set_timer(int t)
 {
    TA0CCR0 = 20057*t;
+}
+
+void modbus_timer_operate()
+{
+  eof = 1;
+  TA0CCR0 = 0; // Останавлмиваем таймер 
 }
 primary_table_s primary_table;
 void send_buff(unsigned char* out_buf, unsigned int size)
@@ -99,7 +104,7 @@ __interrupt void USCI_A0_ISR(void)
     }
     mbs_frame_buff[mbs_buf_offset++]
       = UCA0RXBUF;                     // Читаем очередной байт
-    set_timer(5);                      // Заводим таймер на 3мс.
+    set_timer(5);                      // Заводим таймер на 5мс.
     TA0R = 0;
     break;
   case 4:break;                        
@@ -107,10 +112,17 @@ __interrupt void USCI_A0_ISR(void)
   }
 }
 
+int sec = 0;
+
 // Таймер
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void TIMER0_A0_ISR(void)
 {
+  if(sec++ >=1000)
+  {
+    ADC_init();
+    sec = 0;
+  }
   eof = 1;
-  TA0CCR0 = 0; // Останавлмиваем таймер
+  //TA0CCR0 = 0; // Останавлмиваем таймер
 }

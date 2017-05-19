@@ -74,19 +74,6 @@ void DCO_init()
 }
 
 
-void USCI_A0_init()
-{
-  P3SEL = 0x30;                            // P3.4,5 = USCI_A0 TXD/RXD
-  UCA0CTL1 |= UCSWRST;                     // **Put state machine in reset**
-  UCA0CTL1 |= UCSSEL_2;                    // SMCLK
-  UCA0BR0 = 18;                            // 9600 Baud
-  UCA0BR1 = 0;                              
-  UCA0MCTL |= UCBRS_1 + UCBRF_0;            // Modulation UCBRSx=1, UCBRFx=0
-  UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-  UCA0IE |= UCRXIE;                         // Enable USCI_A0 RX interrupt
-}
-
-
 void SMLK_init()
 {
   //Init SMLK with DCO (UART uses SMLK)

@@ -39,15 +39,13 @@ NextState1=0
 Break=0
 State Storage=0
 [DebugChecksum]
-Checksum=411513743
+Checksum=-1044449213
 [CallStack]
 ShowArgs=0
 [Disassembly]
 MixedMode=1
 [Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\main.cpp}.39.5" 1 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\main.cpp}.36.3" 1 0 0 0 "" 0 ""
-Count=2
+Count=0
 [FET]
 Clock mode=14
 Extended Clock mode=-1
