@@ -1,4 +1,4 @@
-#include "SMLK_init.h"
+#include "SMCLK_init.h"
 #include "msp430x54x.h"
 //Energy voltage level up
 void SetVCoreUp (unsigned int level)

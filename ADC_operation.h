@@ -7,7 +7,10 @@ union voltage_container
   unsigned char i_volt[4];
 };  
 
+//Инициализация АЦП.
 void ADC_init();
+
+//Возвращает считанное с АЦП напряжение
 voltage_container get_voltage();
 
 #endif

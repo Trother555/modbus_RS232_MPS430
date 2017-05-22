@@ -8,34 +8,39 @@ bool voltage_ready = 0;
 
 void ADC_init()
 {
-    REFCTL0 |= REFON;	//Enable refference generator
-    P6SEL |= 0x01;          // Enable A/D channel A0
+	//Enable refference generator
+    REFCTL0 |= REFON;
+	 // Enable A/D channel A0
+    P6SEL |= 0x01;         
     // Turn on ADC12, set sampling time, set multiple sample conversion, set ref on, set ADC clock divider to 8
     ADC12CTL0 = ADC12ON+ADC12SHT0_14+ADC12MSC + ADC12REFON_L + ADC12DIV_7;
-    // Use sampling timer, repeat single channel, SMCLK
-    ADC12CTL1 = ADC12SHP + ADC12CONSEQ_2;// + ADC12SSEL0 + ADC12SSEL1;  
-    ADC12MCTL0 = ADC12SREF_1;                 // Vr+=Vref+ and Vr-=AVss
-    ADC12IE = 0x01;                           // Enable ADC12IFG.0
-    ADC12CTL0 |= ADC12ENC;                    // Enable conversions
+    // Use sampling timer, repeat single channel
+    ADC12CTL1 = ADC12SHP + ADC12CONSEQ_2;
+	// Vr+=Vref+ and Vr-=AVss
+    ADC12MCTL0 = ADC12SREF_1;
+	// Enable ADC12IFG.0	
+    ADC12IE = 0x01;               
+	// Enable conversions	
+    ADC12CTL0 |= ADC12ENC;                    		
 }
 
-//helping function for get_voltage
+//Вспомогательная функция для get_voltage
 float get_volt()
 {
     unsigned long int res = 0;
     for(int i =0;i<sample_count;i++)
     {
      res+=results[i];
-    }
-    //x = (y - 1120)/(3936-1120)*(2.75-0.75)+0.75
-    //return ((float)res/sample_count-1120)*(2.25-0.75)/(3184-1120)+0.75;          
+    }       
+	//Формула из документации к MSP430, параграф про АЦП.
     return (float)res/sample_count*3/4095;
 }
 
 voltage_container get_voltage()
 {
     voltage_container vc;
-    ADC12CTL0 |= ADC12SC;       // Start ADC conversion
+	// Start ADC conversion
+    ADC12CTL0 |= ADC12SC;       
     while(!voltage_ready);
     vc.f_volt = get_volt();
     return vc;
@@ -51,17 +56,16 @@ __interrupt void ADC12ISR (void)
     case  0: break;                           // Vector  0:  No interrupt
     case  2: break;                           // Vector  2:  ADC overflow
     case  4: break;                           // Vector  4:  ADC timing overflow
-    case  6:                                  // Vector  6:  ADC12IFG0
+    case  6:                                  		// Vector  6:  ADC12IFG0
       if (index == sample_count)
       {
         index = 0;
         voltage_ready = true;
-        //ADC12CTL0 &= ~(ADC12ENC|ADC12SC);        // Disable
         ADC12IE = 0x00;
         return;
       }
-      results[index] = ADC12MEM0;             // Move results
-      index++;                                // Increment results index, modulo; Set Breakpoint1 here
+      results[index] = ADC12MEM0;  
+      index++;                               
 
     case  8: break;                           // Vector  8:  ADC12IFG1
     case 10: break;                           // Vector 10:  ADC12IFG2

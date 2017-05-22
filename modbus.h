@@ -3,13 +3,13 @@
 
 #include "modbus_slave.h"
 
-
-#define SLAVE_ADDRESS (1)                 //јдрес текущего устройства(1-247)
+//Начальный адрес текущего устройства(1-247)
+#define SLAVE_ADDRESS (1)                
 #define NUMBER_OF_REGISTERS (3)         
 #define NUMBER_OF_HOLD_REGISTERS (2)
 
 
-//Modbus primary table
+//Таблица памяти Modbus 
 struct primary_table_s
 {
   unsigned char all_memory[2*NUMBER_OF_REGISTERS];
@@ -22,18 +22,11 @@ struct primary_table_s
 	end_memory(all_memory+2*NUMBER_OF_REGISTERS){}
 };
 
-/*
-struct mb_req_pdu_s
-{
-  unsigned char function_code;
-  unsigned char data[252];
-};
-*/
-
-void write_buff();
+//Основная функция Modbus, выполняемая в цикле работы протокола. 
 void MBS_operation();
+//Начальная инициализация
 void MBS_init();
-unsigned char MBSB_read(unsigned char*, unsigned char*, unsigned char);
-unsigned char MBSB_write(unsigned char*, unsigned char*, unsigned char);
-void MBSB_write_registers(int offset, unsigned char*, unsigned char);
+//Запись в память Modbus по смещению offset от src регистров в количестве reg_cnt
+void MBSB_write_registers(int offset, unsigned char* src, unsigned char reg_cnt);
+
 #endif
