@@ -135,15 +135,11 @@
                     <name>BICOMP</name>
                     <file> 12</file>
                 </tool>
-                <tool>
-                    <name>ICC430</name>
-                    <file> 55</file>
-                </tool>
             </outputs>
             <inputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 19 6 41 44 21 20 52 37 46 16 15 34 1 45 57 4 31 49</file>
+                    <file> 19 44 21 20 52 6 37 46 16 15 34 1 41 45 57 4 31 49</file>
                 </tool>
                 <tool>
                     <name>ICC430</name>

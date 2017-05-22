@@ -51,7 +51,7 @@ void UART_init()
 
 void MBS_init()
 {
-  UART_init()
+  UART_init();
   timer_init();
   primary_table.all_memory[0] = SLAVE_ADDRESS;
 }
